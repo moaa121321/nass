@@ -78,7 +78,11 @@ body.is-loaded .features li { animation: fadeInUp 420ms ease both; }
 .card{background:linear-gradient(180deg,#071226, #0b1220);border-radius:10px;padding:18px;width:260px;box-shadow:0 6px 30px rgba(0,0,0,0.6);text-align:center;border:1px solid rgba(255,255,255,0.04)}
 .card.big{width:420px}
 .card img{width:100%;height:auto;border-radius:8px;display:block;margin-bottom:12px}
-.prod-name{font-size:26px;margin:6px 0;color:#fff}
+.prod-name{font-size:26px;margin:0;color:#fff}
+.prod-header{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.prod-marquee{overflow:hidden;width:100%;max-width:640px;min-width:0}
+.marquee-text{display:inline-block;color:#9bd1ff;white-space:nowrap;animation:marqueeScroll 92s linear infinite}
+@keyframes marqueeScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 .bykey{color:#9bd1ff;font-weight:700;margin-bottom:6px}
 .actions{margin-top:12px}
 .buy-btn{display:inline-block;background:linear-gradient(90deg,#ff6b6b,#ffb86b);color:#08111a;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700}
@@ -92,14 +96,39 @@ body.is-loaded .features li { animation: fadeInUp 420ms ease both; }
 
 .payment-options{margin-top:12px;text-align:center}
 .payments{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
-.payment-link{display:inline-flex;align-items:center;justify-content:center;color:#cfe8ff;text-decoration:none;font-size:12px;padding:6px;border-radius:8px;background:transparent;border:none;min-width:44px;min-height:28px}
-.payment-link:hover{background:rgba(255,255,255,0.02)}
+.payment-link{display:inline-flex;align-items:center;justify-content:center;color:#cfe8ff;font-size:12px;padding:6px;border-radius:8px;background:transparent;border:none;min-width:44px;min-height:28px;cursor:default;pointer-events:none}
+.payment-link:hover{background:transparent}
 .payment-link::after{content:attr(data-name);font-size:11px;padding:2px 6px}
 .payment-link.has-img::after{content:''}
 .payment-link.has-img{padding:2px}
 
 /* If a logo image is provided inside the link, style it */
 .payment-link img{max-width:48px;max-height:28px;display:block;border-radius:4px}
+
+/* Custom features and order summary */
+.custom-features{margin-top:12px;text-align:left;background:rgba(255,255,255,0.01);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+.custom-features h4{margin:0 0 8px 0;color:#d9f0ff}
+.features-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.feature-item{font-size:15px;color:#dbeeff}
+.feature-item input{margin-right:8px}
+.feature-item .feat-price{color:#9bd1ff;margin-left:8px;font-weight:700}
+.order-summary{display:flex;gap:12px;align-items:center;margin-top:8px}
+.order-summary span{font-size:14px;color:#cfe8ff}
+.order-summary .total-price{font-weight:800;color:#fff}
+.order-summary #placeOrderBtn{margin-left:auto}
+/* cap notice */
+.cap-notice{background:rgba(255,0,0,0.04);padding:8px;border-radius:6px;color:#ffb3b3;font-size:13px}
+
+.min-notice{background:rgba(255,220,136,0.04);padding:8px;border-radius:6px;color:#ffdca8;font-size:13px}
+
+.buy-btn.disabled{opacity:0.5;pointer-events:none;cursor:default}
+
+/* Ensure features list is vertical and spaced */
+.features .feature-item{display:block;margin:8px 0;padding:8px;border-radius:6px;background:rgba(255,255,255,0.01)}
+.features .feature-item input{margin-right:10px}
+
+.select-full{display:inline-flex;align-items:center;gap:8px;margin-left:12px;color:#dbeeff}
+.select-full input{transform:scale(1.05)}
 
 .price{font-weight:700;color:#0a6cff}
 .site-footer{text-align:center;padding:18px;color:#8b98a8}
