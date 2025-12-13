@@ -142,3 +142,20 @@ body.is-loaded .features li { animation: fadeInUp 420ms ease both; }
 .form input{width:100%;padding:10px;margin-top:6px;border:1px solid rgba(255,255,255,0.06);border-radius:6px;background:transparent;color:#e6eef8}
 button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
 .errors{background:#3b1212;border:1px solid #5d1b1b;padding:8px;margin-bottom:12px;color:#ffb3b3}
+
+/* Responsive tweaks: make product boxes slightly smaller on small screens (Android) */
+@media (max-width: 480px) {
+	.container{padding:0 12px}
+	.products{gap:12px}
+	.card{width:220px;max-width:calc(100% - 24px);padding:14px}
+	.card.big{width:360px;max-width:calc(100% - 24px)}
+	.trending-list .card{width:180px}
+	.site-header h1{font-size:18px}
+}
+
+@media (max-width: 360px) {
+	.products{justify-content:center}
+	.card{width:100%;max-width:320px}
+	.card.big{width:100%;max-width:420px}
+	.container{margin:18px auto}
+}
