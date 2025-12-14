@@ -10,7 +10,7 @@ body{margin:0;background:#000;color:#e6eef8;min-height:100vh}
 .menu-wrap{position:relative}
 .menu-button{background:transparent;border:none;color:#cfe8ff;font-size:22px;cursor:pointer;padding:6px;border-radius:6px}
 .menu-button:hover{background:rgba(255,255,255,0.02)}
-.menu-dropdown{display:none;position:absolute;right:0;top:36px;background:#041022;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,0.6);z-index:1000}
+.menu-dropdown{display:none;position:absolute;right:0;top:36px;background:#041022;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,0.6);z-index:10000}
 .menu-dropdown a{display:block;color:#dbeeff;padding:8px 10px;text-decoration:none;border-radius:6px}
 .menu-dropdown a:hover{background:rgba(255,255,255,0.02)}
 
@@ -75,7 +75,7 @@ body.is-loaded .features li { animation: fadeInUp 420ms ease both; }
 .container{max-width:1100px;margin:28px auto;padding:0 18px}
 .products{display:flex;gap:20px;flex-wrap:wrap}
 .products.single{justify-content:center}
-.card{background:linear-gradient(180deg,#071226, #0b1220);border-radius:10px;padding:18px;width:260px;box-shadow:0 6px 30px rgba(0,0,0,0.6);text-align:center;border:1px solid rgba(255,255,255,0.04)}
+.card{background:linear-gradient(180deg,#071226, #0b1220);border-radius:10px;padding:18px;width:260px;box-shadow:0 6px 30px rgba(0,0,0,0.6);text-align:center;border:1px solid rgba(255,255,255,0.04);position:relative;z-index:1}
 .card.big{width:420px}
 .card img{width:100%;height:auto;border-radius:8px;display:block;margin-bottom:12px}
 .prod-name{font-size:26px;margin:0;color:#fff}
@@ -154,7 +154,7 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
 	.card{width:100%;max-width:320px}
 	.card.big{width:100%;max-width:420px}
 	.container{margin:18px auto}
-  .menu-dropdown{top:40px}
+  .menu-dropdown{top:50px}
 }
 
 @media (max-width: 360px) {
@@ -162,5 +162,5 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
   .card{width:180px;max-width:300px}
   .card.big{width:280px;max-width:380px}
   .container{margin:18px auto}
-  .menu-dropdown{top:44px}
+  .menu-dropdown{top:54px}
 }

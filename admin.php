@@ -69,6 +69,12 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
     </nav>
     <div class="nav-right">
         <span class="welcome">Admin Panel</span>
+        <?php if ($user === 'admin'): ?>
+            <a href="notifications.php" style="margin-left:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;"></a>
+        <?php endif; ?>
+        <?php if ($user): ?>
+            <a href="my_orders.php" style="margin-left:10px;"><img src="orders.png" alt="My Orders" style="width:24px;height:24px;"></a>
+        <?php endif; ?>
     </div>
 </header>
 

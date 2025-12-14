@@ -9,7 +9,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 require __DIR__ . '/config.php';
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $products = json_decode(file_get_contents('products.json'), true) ?: [
-    ['id'=>'1','name'=>'Nash3D','price'=>'By Ernyzas','img'=>'https://via.placeholder.com/400x250?text=nash3d']
+    ['id'=>'Nash3D','name'=>'Nash3D','price'=>'By Ernyzas','img'=>'https://via.placeholder.com/400x250?text=nash3d']
 ];
 
 // Handle product edit
@@ -49,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
                     <a href="login.php">Log In</a>
                 <?php else: ?>
                     <a href="#">My Account (<?php echo htmlspecialchars($user); ?>)</a>
-                    <a href="my_orders.php">My Orders</a>
                     <a href="?action=logout">Log Out</a>
                 <?php endif; ?>
                 <a href="https://t.me/nijonico" target="_blank" rel="noopener">Telegram</a>
@@ -59,6 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     <div class="nav-right">
         <?php if ($user === 'admin'): ?>
             <a href="notifications.php" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;"></a>
+        <?php endif; ?>
+        <?php if ($user): ?>
+            <a href="my_orders.php" style="margin-right:10px;"><img src="orders.png" alt="My Orders" style="width:24px;height:24px;"></a>
         <?php endif; ?>
     </div>
 </header>
@@ -149,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
             <input type="text" id="contactValue" name="contactValue" placeholder="e.g. @username or +1234567890" required>
             <input type="hidden" id="orderFeatures" name="features">
             <input type="hidden" id="orderTotal" name="total">
-            <input type="hidden" id="orderProductId" name="productId" value="1">
+            <input type="hidden" id="orderProductId" name="productId" value="Nash3D">
             <button type="submit" class="buy-btn">Submit Order</button>
         </form>
         <div id="orderResult" class="add-result"></div>
