@@ -49,16 +49,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
                     <a href="login.php">Log In</a>
                 <?php else: ?>
                     <a href="#">My Account (<?php echo htmlspecialchars($user); ?>)</a>
-                    <?php if ($user === 'admin'): ?>
-                        <a href="notifications.php"><img src="notifications.png" alt="Notifications" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"> Notifications</a>
-                    <?php endif; ?>
+                    <a href="my_orders.php">My Orders</a>
                     <a href="?action=logout">Log Out</a>
                 <?php endif; ?>
                 <a href="https://t.me/nijonico" target="_blank" rel="noopener">Telegram</a>
             </div>
         </div>
     </nav>
- </header>
+    <div class="nav-right">
+        <?php if ($user === 'admin'): ?>
+            <a href="notifications.php" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;"></a>
+        <?php endif; ?>
+    </div>
+</header>
 
 <main class="container">
     <h2>Product</h2>
@@ -101,7 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
                     <span class="base-price" data-base="0">Base: $0</span>
                     <span class="selected-price">Selected: $0</span>
                     <span class="total-price">Total: $0</span>
-                    <button id="placeOrderBtn" class="buy-btn" disabled>Place Order</button>
+                    <?php if ($user): ?>
+                        <button id="placeOrderBtn" class="buy-btn">Place Order</button>
+                    <?php else: ?>
+                        <a href="login.php" class="buy-btn" style="display:inline-block;text-decoration:none;">Login to Order</a>
+                    <?php endif; ?>
                 </div>
 
                 <div class="payment-options">
@@ -378,7 +385,8 @@ document.addEventListener('DOMContentLoaded', function(){
         .then(data => {
             result.textContent = data.message || data.error;
             if (data.success) {
-                setTimeout(function(){ modal.setAttribute('aria-hidden', 'true'); form.reset(); }, 2000);
+                result.textContent = 'Thank you for your order! Our admin team will contact you soon.';
+                setTimeout(function(){ modal.setAttribute('aria-hidden', 'true'); form.reset(); }, 3000);
             }
         })
         .catch(error => {
