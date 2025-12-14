@@ -51,11 +51,24 @@ try {
     echo "Orders tablo oluşturulurken hata: " . $e->getMessage() . "\n";
 }
 
-// Alter table to add ip_address if not exists
-$alterSql2 = "ALTER TABLE orders ADD COLUMN ip_address VARCHAR(45) DEFAULT NULL";
+// Create chat table
+$sqlChat = "
+CREATE TABLE IF NOT EXISTS chat (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  sender_username VARCHAR(100) NOT NULL,
+  receiver_username VARCHAR(100) NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_sender_receiver (sender_username, receiver_username),
+  INDEX idx_receiver (receiver_username)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+";
+
 try {
-    $pdo->exec($alterSql2);
-    echo "Orders table ip_address column added.\n";
+    $pdo->exec($sqlChat);
+    echo "chat tablosu oluşturuldu veya zaten mevcut.\n";
 } catch (Exception $e) {
-    echo "Alter table ip_address error: " . $e->getMessage() . "\n";
+    echo "Chat tablo oluşturulurken hata: " . $e->getMessage() . "\n";
 }

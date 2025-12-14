@@ -18,14 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $captcha = intval($_POST['captcha'] ?? 0);
     if ($captcha !== $_SESSION['captcha']) {
-        $error = 'Captcha yanlış.';
+        $error = 'Captcha is incorrect.';
         $num1 = rand(1, 10);
         $num2 = rand(1, 10);
         $_SESSION['captcha'] = $num1 + $num2;
         $_SESSION['captcha_num1'] = $num1;
         $_SESSION['captcha_num2'] = $num2;
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Geçerli bir e-posta girin.';
+        $error = 'Please enter a valid email.';
     } else {
         try {
             $pdo = require __DIR__ . '/config.php';
@@ -38,32 +38,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: index.php');
                 exit;
             }
-            $error = 'E-posta veya şifre hatalı.';
+            $error = 'Email or password is incorrect.';
         } catch (Exception $e) {
-            $error = 'Veritabanı hatası: ' . $e->getMessage();
+            $error = 'Database error: ' . $e->getMessage();
         }
     }
 }
 ?>
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Giriş</title>
+    <title>Login</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <main class="auth container">
-    <h2>Giriş Yap</h2>
+    <h2>Log In</h2>
     <?php if ($error): ?><div class="errors"><p><?php echo htmlspecialchars($error); ?></p></div><?php endif; ?>
     <form method="post" action="login.php" class="form">
-        <label>E-posta<br><input type="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"></label>
-        <label>Şifre<br><input type="password" name="password"></label>
+        <label>Email<br><input type="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"></label>
+        <label>Password<br><input type="password" name="password"></label>
         <label>Captcha: <?php echo $num1; ?> + <?php echo $num2; ?> = <input type="number" name="captcha" required></label>
-        <button type="submit">Giriş</button>
+        <button type="submit">Login</button>
     </form>
-    <p>Hesabınız yok mu? <a href="signup.php">Kayıt ol</a></p>
+    <p>Don't have an account? <a href="signup.php">Sign up</a></p>
 </main>
 </body>
 </html>

@@ -3,7 +3,7 @@ session_start();
 header('Content-Type: application/json');
 if (!isset($_SESSION['user'])) {
     http_response_code(401);
-    echo json_encode(['error' => 'Giriş yapmalısınız.']);
+    echo json_encode(['error' => 'You must log in.']);
     exit;
 }
 
@@ -16,7 +16,7 @@ $img = trim($data['img'] ?? '');
 
 if ($title === '') {
     http_response_code(400);
-    echo json_encode(['error' => 'Başlık gerekli.']);
+    echo json_encode(['error' => 'Title is required.']);
     exit;
 }
 

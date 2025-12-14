@@ -52,7 +52,7 @@ $products = json_decode(file_get_contents('products.json'), true) ?: [];
 $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC")->fetchAll();
 ?>
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -66,6 +66,7 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
             <button id="menuBtn" class="menu-button" aria-label="Menu">⋮</button>
             <div id="menuDropdown" class="menu-dropdown" aria-hidden="true">
                 <a href="index.php">Home</a>
+                <a href="chat.php">Chat</a>
                 <a href="?action=logout">Log Out</a>
             </div>
         </div>

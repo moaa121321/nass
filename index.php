@@ -37,12 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
 }
 ?>
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Ernyzas Home Page</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .message.sent { text-align: right; color: blue; }
+        .message.received { text-align: left; color: green; }
+    </style>
 </head>
 <body>
 <header class="site-header">
@@ -65,8 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     <div class="nav-right">
         <?php if ($user === 'admin'): ?>
             <a href="notifications.php" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;"></a>
+            <a href="chat.php" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;"></a>
         <?php endif; ?>
         <?php if ($user): ?>
+            <a href="#" id="chatBtn" style="margin-right:10px;"><img src="chat.png" alt="Chat with Admin" style="width:24px;height:24px;"></a>
             <a href="my_orders.php" style="margin-right:10px;"><img src="orders.png" alt="My Orders" style="width:24px;height:24px;"></a>
         <?php endif; ?>
     </div>
@@ -136,6 +142,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
         <?php endforeach; ?>
     </div>
 </main>
+
+<!-- Chat Modal -->
+<div id="chatModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+        <button class="modal-close" id="closeChatModal">&times;</button>
+        <h3>Chat with Administrator</h3>
+        <div id="chatMessages" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"></div>
+        <form id="chatForm">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+            <input type="hidden" name="receiver" value="admin">
+            <input type="text" id="chatMessage" name="message" placeholder="Type your message..." required style="width: 70%; padding: 5px;">
+            <button type="submit" style="padding: 5px 10px;"><img src="send.png" alt="Send" style="width:20px;height:20px;"></button>
+        </form>
+        <p id="adminStatus">Administrator is <?php echo (isset($_SESSION['user']) && $_SESSION['user'] === 'admin') ? 'online' : 'checking...'; ?></p>
+    </div>
+</div>
 
 <div id="orderModal" class="modal" aria-hidden="true">
     <div class="modal-content">
@@ -447,6 +469,67 @@ document.addEventListener('DOMContentLoaded', function(){
 
     closeEditBtn.addEventListener('click', function(){
         editModal.setAttribute('aria-hidden', 'true');
+    });
+})();
+
+// Chat Modal
+(function(){
+    var chatModal = document.getElementById('chatModal');
+    var chatBtn = document.getElementById('chatBtn');
+    var closeChatBtn = document.getElementById('closeChatModal');
+    var chatForm = document.getElementById('chatForm');
+    var chatMessages = document.getElementById('chatMessages');
+
+    if (!chatBtn || !chatModal) return;
+
+    chatBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        chatModal.setAttribute('aria-hidden', 'false');
+        loadChatMessages();
+    });
+
+    closeChatBtn.addEventListener('click', function(){
+        chatModal.setAttribute('aria-hidden', 'true');
+    });
+
+    function loadChatMessages() {
+        fetch('get_messages.php?other=admin')
+        .then(response => response.json())
+        .then(data => {
+            chatMessages.innerHTML = '';
+            data.messages.forEach(function(msg){
+                var div = document.createElement('div');
+                div.className = 'message ' + (msg.sender_username === '<?php echo $user; ?>' ? 'sent' : 'received');
+                div.textContent = msg.sender_username + ': ' + msg.message;
+                chatMessages.appendChild(div);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    }
+
+    chatForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        var formData = new FormData(chatForm);
+        fetch('send_message.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('chatMessage').value = '';
+                loadChatMessages();
+            } else {
+                alert(data.error);
+            }
+        });
+    });
+
+    // Check admin status
+    fetch('get_admin_status.php')
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('adminStatus').textContent = 'Administrator is ' + (data.online ? 'online' : 'offline');
     });
 })();
 </script>

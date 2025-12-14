@@ -7,10 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['confirm'] ?? '';
     $address = trim($_POST['address'] ?? '');
-    if ($username === '') $errors[] = 'Kullanıcı adı girin.';
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Geçerli bir e-posta girin.';
-    if (strlen($password) < 6) $errors[] = 'Şifre en az 6 karakter olmalıdır.';
-    if ($password !== $confirm) $errors[] = 'Şifreler eşleşmiyor.';
+    if ($username === '') $errors[] = 'Please enter a username.';
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Please enter a valid email.';
+    if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters.';
+    if ($password !== $confirm) $errors[] = 'Passwords do not match.';
     if (empty($errors)) {
         try {
             $pdo = require __DIR__ . '/config.php';
@@ -18,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = ?');
             $stmt->execute([$email]);
             if ($stmt->fetchColumn() > 0) {
-                $errors[] = 'Bu e-posta zaten kayıtlı.';
+                $errors[] = 'This email is already registered.';
             } else {
                 $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE ip_address = ?');
                 $stmt->execute([$ip]);
                 if ($stmt->fetchColumn() >= 2) {
-                    $errors[] = 'Bu IP adresinden maksimum hesap sayısı aşıldı.';
+                    $errors[] = 'Maximum account limit per IP exceeded.';
                 } else {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
                     $ins = $pdo->prepare('INSERT INTO users (username, email, password, address, ip_address) VALUES (?, ?, ?, ?, ?)');
@@ -34,22 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         } catch (Exception $e) {
-            $errors[] = 'Veritabanı hatası: ' . $e->getMessage();
+            $errors[] = 'Database error: ' . $e->getMessage();
         }
     }
 }
 ?>
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kayıt Ol</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <main class="auth container">
-    <h2>Kayıt Ol</h2>
+    <h2>Sign Up</h2>
     <?php if ($errors): ?>
         <div class="errors">
             <ul>
@@ -60,13 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
     <form method="post" action="signup.php" class="form">
-        <label>Kullanıcı Adı<br><input type="text" name="username" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"></label>
-        <label>E-posta<br><input type="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"></label>
-        <label>Şifre<br><input type="password" name="password"></label>
-        <label>Şifre (tekrar)<br><input type="password" name="confirm"></label>
-        <button type="submit">Kayıt Ol</button>
+        <label>Username<br><input type="text" name="username" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"></label>
+        <label>Email<br><input type="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>"></label>
+        <label>Password<br><input type="password" name="password"></label>
+        <label>Confirm Password<br><input type="password" name="confirm"></label>
+        <button type="submit">Sign Up</button>
     </form>
-    <p>Zaten hesabınız var mı? <a href="login.php">Giriş yap</a></p>
+    <p>Already have an account? <a href="login.php">Log in</a></p>
 </main>
 </body>
 </html>

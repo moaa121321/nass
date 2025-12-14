@@ -1,57 +1,57 @@
-# Mini Online Shop (PHP) — MySQL Entegrasyonu
+# Mini Online Shop (PHP) — MySQL Integration
 
-Kısa demo uygulama: `signup.php`, `login.php`, `index.php`.
+Short demo application: `signup.php`, `login.php`, `index.php`.
 
-Önemli dosyalar:
-- `config.php` — `DATABASE_URL` kullanarak PDO bağlantısı oluşturur.
-- `db_init.php` — Çalıştırıldığında `users` tablosunu oluşturur.
+Important files:
+- `config.php` — Creates PDO connection using `DATABASE_URL`.
+- `db_init.php` — When executed, creates the `users` table.
 
-Hızlı çalışma (geliştirme):
+Quick start (development):
 
-1) İsteğe bağlı: `DATABASE_URL` ortam değişkeni ayarlayın. Örnek format:
+1) Optional: Set the `DATABASE_URL` environment variable. Example format:
 
 ```
 mysql://user:pass@host:port/dbname?ssl-mode=REQUIRED
 ```
 
-2) Veritabanı tablosunu oluşturun:
+2) Create the database table:
 
 ```bash
 php db_init.php
 ```
 
-3) Uygulamayı çalıştırın:
+3) Run the application:
 
 ```bash
 php -S localhost:8000
 ```
 
-4) Tarayıcıda açın: http://localhost:8000
+4) Open in browser: http://localhost:8000
 
-Notlar:
-- `signup.php` artık `address` alanını alır ve kullanıcıyı MySQL `users` tablosuna kaydeder.
-- `login.php` veritabanından doğrulama yapar.
+Notes:
+- `signup.php` now takes the `address` field and registers the user in the MySQL `users` table.
+- `login.php` validates from the database.
 
-DB SSL ve bağlantı notları:
-- Eğer bağlantı hatası alıyorsanız önce PHP uzantılarının yüklü olduğundan emin olun:
+DB SSL and connection notes:
+- If you get a connection error, first make sure PHP extensions are installed:
 
 ```bash
 php -m | grep -E "pdo|pdo_mysql|openssl"
 ```
 
-- Uzaktan MySQL sunucuları genellikle TLS (SSL) isteyebilir. `config.php` URL'deki `ssl-mode` parametresini okur ve varsa sistemdeki yaygın CA bundle yolunu kullanmaya çalışır. Eğer TLS hatası alıyorsanız CA bundle yolunu belirtin veya sunucu yöneticisinden CA dosyasını alın.
-- Geliştirme sırasında, bağlantı testini şu komutla yapabilirsiniz:
+- Remote MySQL servers usually require TLS (SSL). `config.php` reads the `ssl-mode` parameter in the URL and tries to use the common CA bundle path on the system if available. If you get a TLS error, specify the CA bundle path or get the CA file from the server administrator.
+- During development, you can test the connection with this command:
 
-- Proje ile birlikte bir CA sertifikası sağladıysanız onu `certs/ca.pem` olarak kaydettim; `config.php` önce bu dosyayı kullanmayı dener.
-- Eğer kendiniz bir CA dosyası eklemek isterseniz, dosyayı `certs/ca.pem` yoluna koyun ve uygun erişim izinlerini verin (ör. `chmod 644 certs/ca.pem`).
+- If a CA certificate is provided with the project, I saved it as `certs/ca.pem`; `config.php` tries to use this file first.
+- If you want to add your own CA file, put the file in the `certs/ca.pem` path and give appropriate access permissions (e.g. `chmod 644 certs/ca.pem`).
 
-Geliştirme sırasında, bağlantı testini şu komutla yapabilirsiniz:
+During development, you can test the connection with this command:
 
 ```bash
 php -r "require 'config.php'; echo 'OK';"
 ```
 
-Public MySQL istemcisi ile bağlanma (örnek):
+Connecting with public MySQL client (example):
 
 ```bash
 mysql --user=upadmin --password=AVNS_i6tNjDLSLM6RPUXvlTP \
@@ -59,6 +59,6 @@ mysql --user=upadmin --password=AVNS_i6tNjDLSLM6RPUXvlTP \
 	--ssl-ca=certs/ca.pem --ssl-mode=REQUIRED
 ```
 
-Not: Parolayı komutta doğrudan yazmak güvenlik riski oluşturur; mümkünse `--password` parametresini çıkartıp istemci sizden şifreyi sormanızı sağlayın.
+Note: Writing the password directly in the command creates a security risk; if possible, remove the `--password` parameter and let the client ask for the password.
 
 # fjhsdgfjhksdf

@@ -27,7 +27,7 @@ $userId = $pdo->query("SELECT id FROM users WHERE username = '$user'")->fetch()[
 $orders = $pdo->query("SELECT * FROM orders WHERE user_id = $userId ORDER BY created_at DESC")->fetchAll();
 ?>
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
