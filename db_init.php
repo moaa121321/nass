@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS orders (
   total_price DECIMAL(10,2),
   contact_type ENUM('telegram', 'discord', 'whatsapp'),
   contact_value VARCHAR(255),
-  status ENUM('pending', 'completed', 'cancelled') DEFAULT 'pending',
+  status ENUM('pending', 'preparing', 'successful', 'declined', 'cancelled', 'paused') DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 )
@@ -47,4 +47,13 @@ try {
     echo "orders tablosu oluşturuldu veya zaten mevcut.\n";
 } catch (Exception $e) {
     echo "Orders tablo oluşturulurken hata: " . $e->getMessage() . "\n";
+}
+
+// Alter table to update enum if needed
+$alterSql = "ALTER TABLE orders MODIFY COLUMN status ENUM('pending', 'preparing', 'successful', 'declined', 'cancelled', 'paused') DEFAULT 'pending'";
+try {
+    $pdo->exec($alterSql);
+    echo "Orders table status enum updated.\n";
+} catch (Exception $e) {
+    echo "Alter table error: " . $e->getMessage() . "\n";
 }
