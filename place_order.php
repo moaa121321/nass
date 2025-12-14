@@ -28,13 +28,11 @@ if (!$contactType || !$contactValue || $total <= 0) {
     exit;
 }
 
-// Sanitize inputs
 $contactType = htmlspecialchars($contactType);
 $contactValue = htmlspecialchars($contactValue);
 $features = htmlspecialchars($features);
 $productId = htmlspecialchars($productId);
 
-// Get user ID
 $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
 $stmt->execute([$user]);
 $userRow = $stmt->fetch();
@@ -46,7 +44,6 @@ if (!$userRow) {
 $userId = $userRow['id'];
 
 try {
-    // Check pending orders limit: max 2 per user
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ? AND status NOT IN ('completed', 'cancelled')");
     $stmt->execute([$userId]);
     if ($stmt->fetchColumn() >= 2) {

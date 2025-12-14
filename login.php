@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $captcha = intval($_POST['captcha'] ?? 0);
     if ($captcha !== $_SESSION['captcha']) {
         $error = 'Captcha yanlış.';
-        // Regenerate captcha on error
         $num1 = rand(1, 10);
         $num2 = rand(1, 10);
         $_SESSION['captcha'] = $num1 + $num2;

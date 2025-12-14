@@ -15,7 +15,6 @@ if (!isset($_SESSION['user'])) {
 
 $user = $_SESSION['user'];
 
-// Handle cancel order
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order'])) {
     $id = intval($_POST['id']);
     $stmt = $pdo->prepare("UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = (SELECT id FROM users WHERE username = ?)");

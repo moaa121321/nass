@@ -12,13 +12,11 @@ $products = json_decode(file_get_contents('products.json'), true) ?: [
     ['id'=>'Nash3D','name'=>'Nash3D','price'=>'By Ernyzas','img'=>'https://via.placeholder.com/400x250?text=nash3d']
 ];
 
-// Generate CSRF token
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 $csrf_token = $_SESSION['csrf_token'];
 
-// Handle product edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $user === 'admin') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die('CSRF token mismatch');
@@ -137,13 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
             </div>
         <?php endforeach; ?>
     </div>
-
-    <!-- Trending section removed per request; products are user-added via modal and shown in products.json -->
-
-    <!-- Add Product feature removed -->
 </main>
 
-<!-- Order Modal -->
 <div id="orderModal" class="modal" aria-hidden="true">
     <div class="modal-content">
         <button class="modal-close" id="closeOrderModal">&times;</button>
@@ -169,7 +162,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     </div>
 </div>
 
-<!-- Warning Modal -->
 <div id="warningModal" class="modal" aria-hidden="true">
     <div class="modal-content">
         <button class="modal-close" id="closeWarningModal">&times;</button>
@@ -179,7 +171,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     </div>
 </div>
 
-<!-- Edit Product Modal -->
 <div id="editModal" class="modal" aria-hidden="true">
     <div class="modal-content">
         <button class="modal-close" id="closeEditModal">&times;</button>
@@ -205,7 +196,6 @@ window.APP = {};
 window.APP.isLoggedIn = <?php echo $user ? 'true' : 'false'; ?>;
 window.APP.username = <?php echo $user ? json_encode($user) : 'null'; ?>;
 
-// Dropdown menu toggle and entrance animations
 document.addEventListener('click', function(e){
     var btn = document.getElementById('menuBtn');
     var dd = document.getElementById('menuDropdown');
@@ -228,9 +218,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 // Add-product JS removed (feature disabled)
 
-// Initialize payment logos: if href points to an image file, inject an <img>, otherwise show the data-name
 document.addEventListener('DOMContentLoaded', function(){
-    // Initialize payment logos (non-clickable): use data-src on spans
     document.querySelectorAll('.payment-link').forEach(function(el){
         var src = el.getAttribute('data-src') || '';
         var title = el.getAttribute('title') || '';
@@ -246,14 +234,12 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
 
-    // Custom features: update totals and order link
     document.querySelectorAll('.products.single').forEach(function(container){
         var baseTextEl = container.querySelector('.base-price');
         var selectedEl = container.querySelector('.selected-price');
         var totalEl = container.querySelector('.total-price');
         var placeBtn = container.querySelector('#placeOrderBtn');
         if (!baseTextEl || !totalEl || !placeBtn) return;
-        // use data-base if provided (we set data-base="0" so full-cheat pricing comes from features)
         var baseNum = parseFloat(baseTextEl.getAttribute('data-base')) || (function(){ var t=baseTextEl.textContent||''; return parseFloat(t.replace(/[^0-9\.\-]/g,''))||0; })();
 
         function recalc(){
@@ -271,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function(){
             var capTotal = 35; // maximum total (USD)
             var madeAdjustments = false;
             if ((baseNum + sum) > capTotal) {
-                // if over cap, deselect expensive features first until within cap
                 sel.sort(function(a,b){ return b.price - a.price; });
                 for (var i=0; i<sel.length && (baseNum + sum) > capTotal; i++){
                     sel[i].el.checked = false;
@@ -280,19 +265,16 @@ document.addEventListener('DOMContentLoaded', function(){
                 }
             }
 
-            // recompute selected names after any adjustments
             var names = checks.filter(function(c){ return c.checked; }).map(function(c){ return c.getAttribute('data-name') || ''; });
             selectedEl.textContent = 'Selected: $' + sum;
             var total = baseNum + sum;
             if (total > capTotal) total = capTotal;
             totalEl.textContent = 'Total: $' + total;
 
-            // update place order message
             var prodName = container.querySelector('.prod-name') ? container.querySelector('.prod-name').textContent : 'Product';
             var msg = prodName + ' - Total: $' + total + '\nFeatures: ' + (names.length?names.join(', '):'None');
             var tg = 'https://t.me/nijonico?text=' + encodeURIComponent(msg);
 
-            // enforce minimum purchase $7 and require at least one selected
             var minPurchase = 5;
             var allowPurchase = (names.length > 0 && sum >= minPurchase);
             var minNotice = container.querySelector('#minNotice');
@@ -315,10 +297,8 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         }
 
-        // wire check change
         container.querySelectorAll('.feature-item input[type=checkbox]').forEach(function(ch){ ch.addEventListener('change', function(){
             recalc();
-            // if any feature unchecked, uncheck full-package; if all checked, check full-package
             var all = Array.from(container.querySelectorAll('.feature-item input[type=checkbox]')).every(function(c){ return c.checked; });
             var full = container.querySelector('#selectFullPackage'); if (full) full.checked = all;
         }); });
@@ -331,7 +311,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 checks.forEach(function(c){ c.checked = fullChk.checked; });
                 recalc();
             });
-            // if full-package is checked on load, select all features
             if (fullChk.checked) {
                 var checks2 = Array.from(container.querySelectorAll('.feature-item input[type=checkbox]'));
                 checks2.forEach(function(c){ c.checked = true; });
@@ -342,25 +321,21 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 });
 
-// Product marquee: build phrases and scroll infinitely
 document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('.card').forEach(function(card){
         var marqueeEl = card.querySelector('.marquee-text');
         if (!marqueeEl) return;
-        // gather feature names (don't repeat product name)
         var feats = Array.from(card.querySelectorAll('.feature-item input[data-name]')).map(function(i){ return i.getAttribute('data-name'); });
         var phrases = [];
         if (feats.length) phrases.push('Available features: ' + feats.join(' · '));
         phrases.push('The best hack ever');
         phrases.push('Unlimited performance');
-        // build long text by joining phrases with separators so marquee has content
         var long = Array(6).fill(phrases.join('  •  ')).join('   ---   ');
         marqueeEl.textContent = long;
     });
 });
 
 
-// Show features toggle
 (function(){
     var btn = document.getElementById('showFeaturesBtn');
     var details = document.getElementById('featureDetails');
@@ -374,7 +349,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 })();
 
-// Order Modal
 (function(){
     var modal = document.getElementById('orderModal');
     var warningModal = document.getElementById('warningModal');
@@ -444,6 +418,8 @@ document.addEventListener('DOMContentLoaded', function(){
             if (data.success) {
                 result.textContent = 'Thank you for your order! Our admin team will contact you soon.';
                 setTimeout(function(){ modal.setAttribute('aria-hidden', 'true'); form.reset(); }, 3000);
+            } else if (data.error && data.error.includes('maximum')) {
+                result.innerHTML += '<br><small><a href="my_orders.php">My Orders</a></small>';
             }
         })
         .catch(error => {
@@ -452,7 +428,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 })();
 
-// Edit Product
 (function(){
     var editModal = document.getElementById('editModal');
     var closeEditBtn = document.getElementById('closeEditModal');

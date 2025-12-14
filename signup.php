@@ -12,17 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($password) < 6) $errors[] = 'Şifre en az 6 karakter olmalıdır.';
     if ($password !== $confirm) $errors[] = 'Şifreler eşleşmiyor.';
     if (empty($errors)) {
-        // Use database
         try {
             $pdo = require __DIR__ . '/config.php';
             $ip = $_SERVER['REMOTE_ADDR'];
-            // check existing email
             $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = ?');
             $stmt->execute([$email]);
             if ($stmt->fetchColumn() > 0) {
                 $errors[] = 'Bu e-posta zaten kayıtlı.';
             } else {
-                // check IP limit: max 2 accounts per IP
                 $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE ip_address = ?');
                 $stmt->execute([$ip]);
                 if ($stmt->fetchColumn() >= 2) {

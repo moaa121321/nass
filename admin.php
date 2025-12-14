@@ -15,7 +15,6 @@ if (!isset($_SESSION['user'])) {
 
 $user = $_SESSION['user'];
 
-// Check if admin (assume admin is 'admin' user)
 $isAdmin = ($user === 'admin');
 
 if (!$isAdmin) {
@@ -23,7 +22,6 @@ if (!$isAdmin) {
     exit;
 }
 
-// Handle product edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
     $products = json_decode(file_get_contents('products.json'), true) ?: [];
     $id = $_POST['id'];
@@ -41,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
     exit;
 }
 
-// Handle order status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_order'])) {
     $id = intval($_POST['id']);
     $status = $_POST['status'];
@@ -122,7 +119,6 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
     </div>
 </main>
 
-<!-- Edit Product Modal -->
 <div id="editModal" class="modal" aria-hidden="true">
     <div class="modal-content">
         <button class="modal-close" id="closeEditModal">&times;</button>
