@@ -10,7 +10,7 @@ body{margin:0;background:#000;color:#e6eef8;min-height:100vh}
 .menu-wrap{position:relative}
 .menu-button{background:transparent;border:none;color:#cfe8ff;font-size:22px;cursor:pointer;padding:6px;border-radius:6px}
 .menu-button:hover{background:rgba(255,255,255,0.02)}
-.menu-dropdown{display:none;position:absolute;right:0;top:36px;background:#041022;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+.menu-dropdown{display:none;position:absolute;right:0;top:36px;background:#041022;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,0.6);z-index:1000}
 .menu-dropdown a{display:block;color:#dbeeff;padding:8px 10px;text-decoration:none;border-radius:6px}
 .menu-dropdown a:hover{background:rgba(255,255,255,0.02)}
 
@@ -60,7 +60,7 @@ body.is-loaded .features li { animation: fadeInUp 420ms ease both; }
 .menu-dropdown{left:0;right:auto}
 
 /* Modal styles */
-.modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,0.95);align-items:center;justify-content:center;padding:20px}
+.modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,0.95);align-items:center;justify-content:center;padding:20px;z-index:2000}
 .modal[aria-hidden="false"]{display:flex}
 .modal-content{background:linear-gradient(180deg,#071226,#061526);padding:18px;border-radius:12px;max-width:640px;width:100%;position:relative;border:1px solid rgba(255,255,255,0.04)}
 .modal-close{position:absolute;right:12px;top:8px;background:transparent;border:none;color:#cfe8ff;font-size:18px;cursor:pointer}
@@ -154,6 +154,7 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
 	.card{width:100%;max-width:320px}
 	.card.big{width:100%;max-width:420px}
 	.container{margin:18px auto}
+  .menu-dropdown{top:40px}
 }
 
 @media (max-width: 360px) {
@@ -161,4 +162,5 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
   .card{width:180px;max-width:300px}
   .card.big{width:280px;max-width:380px}
   .container{margin:18px auto}
+  .menu-dropdown{top:44px}
 }
