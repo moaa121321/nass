@@ -21,8 +21,18 @@ if (!$productId) {
     exit;
 }
 
-$userId = $pdo->query("SELECT id FROM users WHERE username = '$user'")->fetch()['id'];
-$count = $pdo->query("SELECT COUNT(*) FROM orders WHERE user_id = $userId AND product_id = '$productId'")->fetchColumn();
+$stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+$stmt->execute([$user]);
+$userRow = $stmt->fetch();
+if (!$userRow) {
+    echo json_encode(['hasOrder' => false]);
+    exit;
+}
+$userId = $userRow['id'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ? AND product_id = ?");
+$stmt->execute([$userId, $productId]);
+$count = $stmt->fetchColumn();
 
 echo json_encode(['hasOrder' => $count > 0]);
 ?>

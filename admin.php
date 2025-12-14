@@ -102,7 +102,7 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
     <div class="orders">
         <?php foreach ($orders as $o): ?>
             <div class="card">
-                <p>User: <?php echo htmlspecialchars($o['username']); ?></p>
+                <p>User: <?php echo htmlspecialchars($o['username']); ?> (IP: <?php echo htmlspecialchars($o['ip_address']); ?>)</p>
                 <p>Product: <?php echo htmlspecialchars($o['product_id']); ?></p>
                 <p>Features: <?php echo htmlspecialchars($o['features']); ?></p>
                 <p>Total: $<?php echo htmlspecialchars($o['total_price']); ?></p>

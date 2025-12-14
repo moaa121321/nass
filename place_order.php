@@ -46,8 +46,18 @@ if (!$userRow) {
 $userId = $userRow['id'];
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO orders (user_id, product_id, features, total_price, contact_type, contact_value) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$userId, $productId, $features, $total, $contactType, $contactValue]);
+    // Check pending orders limit: max 2 per user
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM orders WHERE user_id = ? AND status NOT IN ('completed', 'cancelled')");
+    $stmt->execute([$userId]);
+    if ($stmt->fetchColumn() >= 2) {
+        http_response_code(400);
+        echo json_encode(['error' => 'You have reached the maximum number of pending orders (2).']);
+        exit;
+    }
+
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $stmt = $pdo->prepare("INSERT INTO orders (user_id, product_id, features, total_price, contact_type, contact_value, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$userId, $productId, $features, $total, $contactType, $contactValue, $ip]);
     echo json_encode(['success' => true, 'message' => 'Order placed successfully!']);
 } catch (Exception $e) {
     http_response_code(500);

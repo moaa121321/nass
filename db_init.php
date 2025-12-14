@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   address VARCHAR(255) DEFAULT NULL,
+  ip_address VARCHAR(45),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS orders (
   contact_type ENUM('telegram', 'discord', 'whatsapp'),
   contact_value VARCHAR(255),
   status ENUM('pending', 'preparing', 'successful', 'declined', 'cancelled', 'paused') DEFAULT 'pending',
+  ip_address VARCHAR(45),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 )

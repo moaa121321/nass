@@ -15,18 +15,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Use database
         try {
             $pdo = require __DIR__ . '/config.php';
+            $ip = $_SERVER['REMOTE_ADDR'];
             // check existing email
             $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email = ?');
             $stmt->execute([$email]);
             if ($stmt->fetchColumn() > 0) {
                 $errors[] = 'Bu e-posta zaten kayıtlı.';
             } else {
-                $hash = password_hash($password, PASSWORD_DEFAULT);
-                $ins = $pdo->prepare('INSERT INTO users (username, email, password, address) VALUES (?, ?, ?, ?)');
-                $ins->execute([$username, $email, $hash, $address ?: null]);
-                $_SESSION['user'] = $username;
-                header('Location: index.php');
-                exit;
+                // check IP limit: max 2 accounts per IP
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE ip_address = ?');
+                $stmt->execute([$ip]);
+                if ($stmt->fetchColumn() >= 2) {
+                    $errors[] = 'Bu IP adresinden maksimum hesap sayısı aşıldı.';
+                } else {
+                    $hash = password_hash($password, PASSWORD_DEFAULT);
+                    $ins = $pdo->prepare('INSERT INTO users (username, email, password, address, ip_address) VALUES (?, ?, ?, ?, ?)');
+                    $ins->execute([$username, $email, $hash, $address ?: null, $ip]);
+                    $_SESSION['user'] = $username;
+                    header('Location: index.php');
+                    exit;
+                }
             }
         } catch (Exception $e) {
             $errors[] = 'Veritabanı hatası: ' . $e->getMessage();
