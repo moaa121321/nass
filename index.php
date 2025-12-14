@@ -158,6 +158,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     </div>
 </div>
 
+<!-- Warning Modal -->
+<div id="warningModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+        <button class="modal-close" id="closeWarningModal">&times;</button>
+        <h3>Warning</h3>
+        <p>You already have ordered this product. If you still want to buy it, you can press continue or you can see your products by clicking <a href="my_orders.php">take me there</a>.</p>
+        <button id="continueOrder" class="buy-btn">Continue</button>
+    </div>
+</div>
+
 <!-- Edit Product Modal -->
 <div id="editModal" class="modal" aria-hidden="true">
     <div class="modal-content">
@@ -355,8 +365,11 @@ document.addEventListener('DOMContentLoaded', function(){
 // Order Modal
 (function(){
     var modal = document.getElementById('orderModal');
+    var warningModal = document.getElementById('warningModal');
     var btn = document.getElementById('placeOrderBtn');
     var closeBtn = document.getElementById('closeOrderModal');
+    var closeWarningBtn = document.getElementById('closeWarningModal');
+    var continueBtn = document.getElementById('continueOrder');
     var form = document.getElementById('orderForm');
     var result = document.getElementById('orderResult');
 
@@ -364,16 +377,46 @@ document.addEventListener('DOMContentLoaded', function(){
 
     btn.addEventListener('click', function(){
         if (btn.disabled) return;
+        // Check if already ordered
+        fetch('check_order.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({productId: 'Nash3D'})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.hasOrder) {
+                warningModal.setAttribute('aria-hidden', 'false');
+            } else {
+                openOrderModal();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            openOrderModal(); // Fallback
+        });
+    });
+
+    function openOrderModal() {
         // Populate hidden fields
         var features = Array.from(document.querySelectorAll('.feature-item input:checked')).map(function(c){ return c.getAttribute('data-name'); }).join(', ');
         var total = document.querySelector('.total-price').textContent.replace('Total: $', '');
         document.getElementById('orderFeatures').value = features;
         document.getElementById('orderTotal').value = total;
         modal.setAttribute('aria-hidden', 'false');
+    }
+
+    continueBtn.addEventListener('click', function(){
+        warningModal.setAttribute('aria-hidden', 'true');
+        openOrderModal();
     });
 
     closeBtn.addEventListener('click', function(){
         modal.setAttribute('aria-hidden', 'true');
+    });
+
+    closeWarningBtn.addEventListener('click', function(){
+        warningModal.setAttribute('aria-hidden', 'true');
     });
 
     form.addEventListener('submit', function(e){

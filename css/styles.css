@@ -154,7 +154,7 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
 	.card{width:100%;max-width:320px}
 	.card.big{width:100%;max-width:420px}
 	.container{margin:18px auto}
-  .menu-dropdown{top:50px}
+  .menu-dropdown{top:60px}
 }
 
 @media (max-width: 360px) {
@@ -162,5 +162,5 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
   .card{width:180px;max-width:300px}
   .card.big{width:280px;max-width:380px}
   .container{margin:18px auto}
-  .menu-dropdown{top:54px}
+  .menu-dropdown{top:64px}
 }
