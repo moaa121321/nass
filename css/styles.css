@@ -1,7 +1,7 @@
 /* Basit stil dosyası */
 :root{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
 body{margin:0;background:#000;color:#e6eef8;min-height:100vh}
-.site-header{background:linear-gradient(90deg,#0f172a,#001219);color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.site-header{background:linear-gradient(90deg,#0f172a,#001219);color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;z-index:10;position:relative}
 .site-header h1{margin:0;font-size:20px;letter-spacing:1px}
 .site-header .nav-right{display:flex;align-items:center;gap:10px}
 .site-header .nav-right .link{color:#a9c9ff;margin-left:6px;text-decoration:none}
@@ -10,7 +10,7 @@ body{margin:0;background:#000;color:#e6eef8;min-height:100vh}
 .menu-wrap{position:relative}
 .menu-button{background:transparent;border:none;color:#cfe8ff;font-size:22px;cursor:pointer;padding:6px;border-radius:6px}
 .menu-button:hover{background:rgba(255,255,255,0.02)}
-.menu-dropdown{display:none;position:absolute;right:0;top:60px;background:#041022;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,0.6);z-index:1000}
+.menu-dropdown{display:none;position:absolute;right:0;top:62px;background:#041022;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:160px;box-shadow:0 6px 20px rgba(0,0,0,0.6);z-index:1000}
 .menu-dropdown a{display:block;color:#dbeeff;padding:8px 10px;text-decoration:none;border-radius:6px}
 .menu-dropdown a:hover{background:rgba(255,255,255,0.02)}
 
@@ -154,7 +154,7 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
 	.card{width:100%;max-width:320px}
 	.card.big{width:100%;max-width:420px}
 	.container{margin:18px auto}
-  .menu-dropdown{top:70px}
+  .menu-dropdown{top:72px}
 }
 
 @media (max-width: 360px) {
@@ -162,5 +162,5 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
   .card{width:180px;max-width:300px}
   .card.big{width:280px;max-width:380px}
   .container{margin:18px auto}
-  .menu-dropdown{top:80px}
+  .menu-dropdown{top:82px}
 }
