@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     </style>
 </head>
 <body>
-<div class="bg-anim" aria-hidden="true"></div>
 <header class="site-header">
     <nav class="nav-left">
         <div class="menu-wrap left">
             <button id="menuBtn" class="menu-button" aria-label="Menu">⋮</button>
             <div id="menuDropdown" class="menu-dropdown" aria-hidden="true">
                 <a href="index.php">Home</a>
+                <?php if ($user === 'admin'): ?><a href="admin.php?open=add">Add Product</a><?php endif; ?>
                 <?php if (!$user): ?>
                     <a href="signup.php">Register</a>
                     <a href="login.php">Log In</a>
@@ -551,35 +551,6 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     updateAdminStatus();
     setInterval(updateAdminStatus, 5000);
-})();
-// Floating background blobs
-(function(){
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var container = document.querySelector('.bg-anim');
-    if (!container) return;
-    var colors = ['#4cc9f0','#ffd166','#ef476f','#06d6a0','#b892ff'];
-    var count = Math.min(14, Math.max(6, Math.floor(window.innerWidth / 120)));
-    for (var i=0;i<count;i++){
-        var el = document.createElement('div');
-        el.className = 'blob ' + (Math.random() > 0.7 ? 'small' : '');
-        var size = Math.round(80 + Math.random() * 220);
-        el.style.width = size + 'px';
-        el.style.height = size + 'px';
-        el.style.left = Math.round(Math.random() * 100) + '%';
-        el.style.top = Math.round(Math.random() * 100) + '%';
-        var c = colors[Math.floor(Math.random()*colors.length)];
-        el.style.background = 'radial-gradient(circle at 30% 30%, '+c+'33, rgba(255,255,255,0.02) 60%)';
-        var dur = 10 + Math.random() * 20;
-        var dx = (Math.random()*40 - 20) + 'px';
-        var dy = (Math.random()*40 - 10) + 'px';
-        el.style.setProperty('--tx', dx);
-        el.style.setProperty('--ty', dy);
-        el.style.setProperty('--s2', (1 + Math.random()*0.06).toFixed(3));
-        el.style.animationDuration = dur + 's';
-        el.style.animationDelay = (-Math.random()*dur) + 's';
-        el.style.opacity = 0.35 + Math.random()*0.6;
-        container.appendChild(el);
-    }
 })();
 </script>
 </body>

@@ -164,24 +164,3 @@ button{background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius
   .container{margin:18px auto}
   .menu-dropdown{top:82px}
 }
-
-/* Animated background (floating blurred blobs/dots) */
-.bg-anim{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-.bg-anim .blob{position:absolute;border-radius:50%;filter:blur(14px);mix-blend-mode:screen;opacity:0.9;transform:translate3d(0,0,0)}
-.bg-anim .blob.small{filter:blur(6px);opacity:0.7}
-
-@keyframes floatMove {
-  0% { transform: translate3d(0,0,0) scale(1); }
-  50% { transform: translate3d(var(--tx, 0), var(--ty, -30px), 0) scale(var(--s2,1.02)); }
-  100% { transform: translate3d(0,0,0) scale(1); }
-}
-
-.bg-anim .blob{animation-name: floatMove; animation-timing-function: ease-in-out; animation-iteration-count: infinite;}
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .bg-anim .blob { animation-play-state: paused !important; }
-}
-
-/* Ensure main content renders above animated background */
-header.site-header, .container, .modal-content, .card { position: relative; z-index: 1; }

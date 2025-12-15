@@ -116,13 +116,13 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<div class="bg-anim" aria-hidden="true"></div>
 <header class="site-header">
     <nav class="nav-left">
         <div class="menu-wrap left">
             <button id="menuBtn" class="menu-button" aria-label="Menu">⋮</button>
             <div id="menuDropdown" class="menu-dropdown" aria-hidden="true">
                 <a href="index.php">Home</a>
+                <a href="admin.php?open=add">Add Product</a>
                 <a href="chat.php">Chat</a>
                 <a href="?action=logout">Log Out</a>
             </div>
@@ -248,36 +248,6 @@ document.getElementById('closeEditModal').addEventListener('click', function(){
     document.getElementById('editModal').setAttribute('aria-hidden', 'true');
 });
 
-// Floating background blobs (same behavior as index)
-(function(){
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var container = document.querySelector('.bg-anim');
-    if (!container) return;
-    var colors = ['#4cc9f0','#ffd166','#ef476f','#06d6a0','#b892ff'];
-    var count = Math.min(12, Math.max(6, Math.floor(window.innerWidth / 140)));
-    for (var i=0;i<count;i++){
-        var el = document.createElement('div');
-        el.className = 'blob ' + (Math.random() > 0.7 ? 'small' : '');
-        var size = Math.round(60 + Math.random() * 180);
-        el.style.width = size + 'px';
-        el.style.height = size + 'px';
-        el.style.left = Math.round(Math.random() * 100) + '%';
-        el.style.top = Math.round(Math.random() * 100) + '%';
-        var c = colors[Math.floor(Math.random()*colors.length)];
-        el.style.background = 'radial-gradient(circle at 30% 30%, '+c+'33, rgba(255,255,255,0.02) 60%)';
-        var dur = 12 + Math.random() * 18;
-        var dx = (Math.random()*40 - 20) + 'px';
-        var dy = (Math.random()*40 - 10) + 'px';
-        el.style.setProperty('--tx', dx);
-        el.style.setProperty('--ty', dy);
-        el.style.setProperty('--s2', (1 + Math.random()*0.06).toFixed(3));
-        el.style.animationDuration = dur + 's';
-        el.style.animationDelay = (-Math.random()*dur) + 's';
-        el.style.opacity = 0.32 + Math.random()*0.6;
-        container.appendChild(el);
-    }
-})();
-
 // Add product modal handlers
 document.getElementById('openAddBtn').addEventListener('click', function(){
     document.getElementById('addModal').setAttribute('aria-hidden', 'false');
@@ -286,6 +256,15 @@ document.getElementById('openAddBtn').addEventListener('click', function(){
 document.getElementById('closeAddModal').addEventListener('click', function(){
     document.getElementById('addModal').setAttribute('aria-hidden', 'true');
 });
+
+// Open add modal if requested via query param (admin.php?open=add)
+try {
+    if (new URLSearchParams(window.location.search).get('open') === 'add') {
+        document.getElementById('addModal').setAttribute('aria-hidden', 'false');
+    }
+} catch (e) {
+    // ignore in older browsers
+}
 </script>
 </body>
 </html>
