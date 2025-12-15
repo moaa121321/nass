@@ -542,29 +542,11 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     // Check admin status periodically
-    function fmtAgo(seconds) {
-        if (seconds === null) return '';
-        if (seconds < 5) return 'just now';
-        if (seconds < 60) return seconds + 's ago';
-        if (seconds < 3600) return Math.floor(seconds/60) + 'm ago';
-        if (seconds < 86400) return Math.floor(seconds/3600) + 'h ago';
-        return Math.floor(seconds/86400) + 'd ago';
-    }
-
     function updateAdminStatus() {
         fetch('get_admin_status.php?_=' + Date.now())
         .then(response => response.json())
         .then(data => {
-            var el = document.getElementById('adminStatus');
-            if (!data.last_active) {
-                el.textContent = 'Administrator is offline';
-                return;
-            }
-            if (data.online) {
-                el.textContent = 'Administrator is online (active ' + fmtAgo(data.seconds_ago) + ')';
-            } else {
-                el.textContent = 'Administrator is offline (last active ' + fmtAgo(data.seconds_ago) + ')';
-            }
+            document.getElementById('adminStatus').textContent = 'Administrator is ' + (data.online ? 'online' : 'offline');
         });
     }
     updateAdminStatus();

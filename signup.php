@@ -20,28 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->fetchColumn() > 0) {
                 $errors[] = 'This email is already registered.';
             } else {
-                // Only check and store IP if the column exists (avoid SQL errors on older schemas)
-                $colCheck = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'ip_address' AND TABLE_SCHEMA = DATABASE()");
-                $colCheck->execute();
-                $hasIp = (bool)$colCheck->fetchColumn();
-
-                if ($hasIp) {
-                    $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE ip_address = ?');
-                    $stmt->execute([$ip]);
-                    if ($stmt->fetchColumn() >= 2) {
-                        $errors[] = 'Maximum account limit per IP exceeded.';
-                    }
-                }
-
-                if (empty($errors)) {
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE ip_address = ?');
+                $stmt->execute([$ip]);
+                if ($stmt->fetchColumn() >= 2) {
+                    $errors[] = 'Maximum account limit per IP exceeded.';
+                } else {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
-                    if ($hasIp) {
-                        $ins = $pdo->prepare('INSERT INTO users (username, email, password, address, ip_address) VALUES (?, ?, ?, ?, ?)');
-                        $ins->execute([$username, $email, $hash, $address ?: null, $ip]);
-                    } else {
-                        $ins = $pdo->prepare('INSERT INTO users (username, email, password, address) VALUES (?, ?, ?, ?)');
-                        $ins->execute([$username, $email, $hash, $address ?: null]);
-                    }
+                    $ins = $pdo->prepare('INSERT INTO users (username, email, password, address, ip_address) VALUES (?, ?, ?, ?, ?)');
+                    $ins->execute([$username, $email, $hash, $address ?: null, $ip]);
                     $_SESSION['user'] = $username;
                     header('Location: index.php');
                     exit;

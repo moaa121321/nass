@@ -248,27 +248,6 @@ document.getElementById('closeEditModal').addEventListener('click', function(){
     document.getElementById('editModal').setAttribute('aria-hidden', 'true');
 });
 
-// admin heartbeat: mark admin active while admin panel is open
-<?php if ($user === 'admin'): ?>
-(function(){
-    function touch() {
-        fetch('touch_admin.php', { method: 'POST', credentials: 'same-origin' }).catch(()=>{});
-    }
-    touch();
-    setInterval(touch, 10000);
-    // touch on add/edit product submit
-    var addForm = document.querySelector('#addModal form');
-    if (addForm) addForm.addEventListener('submit', function(){ touch(); });
-    var editForm = document.querySelector('#editModal form');
-    if (editForm) editForm.addEventListener('submit', function(){ touch(); });
-})();
-<?php endif; ?>
-
-// Open Add modal if requested via query
-<?php if (isset($_GET['open']) && $_GET['open'] === 'add'): ?>
-document.getElementById('addModal').setAttribute('aria-hidden', 'false');
-<?php endif; ?>
-
 // Add product modal handlers
 document.getElementById('openAddBtn').addEventListener('click', function(){
     document.getElementById('addModal').setAttribute('aria-hidden', 'false');

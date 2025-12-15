@@ -53,18 +53,8 @@ try {
     }
 
     $ip = $_SERVER['REMOTE_ADDR'];
-    // include ip_address column only if present (avoid failing on older schemas)
-    $colCheck = $pdo->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = 'orders' AND COLUMN_NAME = 'ip_address' AND TABLE_SCHEMA = DATABASE()");
-    $colCheck->execute();
-    $hasIp = (bool)$colCheck->fetchColumn();
-
-    if ($hasIp) {
-        $stmt = $pdo->prepare("INSERT INTO orders (user_id, product_id, features, total_price, contact_type, contact_value, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $productId, $features, $total, $contactType, $contactValue, $ip]);
-    } else {
-        $stmt = $pdo->prepare("INSERT INTO orders (user_id, product_id, features, total_price, contact_type, contact_value) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $productId, $features, $total, $contactType, $contactValue]);
-    }
+    $stmt = $pdo->prepare("INSERT INTO orders (user_id, product_id, features, total_price, contact_type, contact_value, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$userId, $productId, $features, $total, $contactType, $contactValue, $ip]);
     echo json_encode(['success' => true, 'message' => 'Order placed successfully!']);
 } catch (Exception $e) {
     http_response_code(500);

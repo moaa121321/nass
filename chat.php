@@ -190,19 +190,6 @@ document.getElementById('messageForm').addEventListener('submit', function(e){
         }
     });
 });
-
-// admin heartbeat (mark admin active while this page is open)
-<?php if ($user === 'admin'): ?>
-    (function(){
-        function touch() {
-            fetch('touch_admin.php', { method: 'POST', credentials: 'same-origin' }).catch(()=>{});
-        }
-        touch();
-        setInterval(touch, 10000);
-        // touch on send message
-        var form = document.getElementById('messageForm');
-        if (form) form.addEventListener('submit', function(){ touch(); });
-    })();
-<?php endif; ?>
+</script>
 </body>
 </html>
