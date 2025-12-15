@@ -546,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function(){
         fetch('get_admin_status.php?_=' + Date.now())
         .then(response => response.json())
         .then(data => {
-            document.getElementById('adminStatus').textContent = 'Administrator is ' + (data.online ? 'online' : 'offline');
+            document.getElementById('adminStatus').textContent = 'Admin will message you' + (data.online ? 'soon' : 'soon');
         });
     }
     updateAdminStatus();
