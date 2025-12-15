@@ -9,10 +9,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 require __DIR__ . '/config.php';
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $unreadCount = 0;
+$orderCount = 0;
 if ($user) {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat WHERE receiver_username = ? AND is_read = FALSE");
     $stmt->execute([$user]);
     $unreadCount = (int)$stmt->fetchColumn();
+    if ($user === 'admin') {
+        $stmt2 = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'");
+        $orderCount = (int)$stmt2->fetchColumn();
+    }
 }
 
 // Only admin may view notifications

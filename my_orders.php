@@ -16,10 +16,15 @@ if (!isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
 
 $unreadCount = 0;
+$orderCount = 0;
 if ($user) {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat WHERE receiver_username = ? AND is_read = FALSE");
     $stmt->execute([$user]);
     $unreadCount = (int)$stmt->fetchColumn();
+    if ($user === 'admin') {
+        $stmt2 = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'");
+        $orderCount = (int)$stmt2->fetchColumn();
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order'])) {
@@ -64,7 +69,7 @@ $orders = $pdo->query("SELECT * FROM orders WHERE user_id = $userId ORDER BY cre
         <?php if ($user): ?>
             <?php if ($user === 'admin'): ?>
                 <a href="notifications.php" class="notif-link" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;">
-                    <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+                    <?php if ($orderCount > 0): ?><span class="notif-badge"><?php echo $orderCount > 9 ? '9+' : $orderCount; ?></span><?php endif; ?>
                 </a>
                 <a href="chat.php" class="chat-link" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;">
                     <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
@@ -95,12 +100,19 @@ $orders = $pdo->query("SELECT * FROM orders WHERE user_id = $userId ORDER BY cre
     }
   }
   function updateBadge(){
+    // chat unread count
     fetch('get_unread_count.php?_='+Date.now())
       .then(r=>r.json())
       .then(data=>{
         var n = data.unread || 0;
-        setBadgeOn('.notif-link', n);
         setBadgeOn('.chat-link', n);
+      }).catch(()=>{});
+    // admin order count
+    fetch('get_order_count.php?_='+Date.now())
+      .then(r=>r.json())
+      .then(data=>{
+        var n = data.orders || 0;
+        setBadgeOn('.notif-link', n);
       }).catch(()=>{});
   }
   setInterval(updateBadge, 4000);

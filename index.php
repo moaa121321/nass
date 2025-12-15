@@ -9,10 +9,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 require __DIR__ . '/config.php';
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $unreadCount = 0;
+$orderCount = 0;
 if ($user) {
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat WHERE receiver_username = ? AND is_read = FALSE");
     $stmt->execute([$user]);
     $unreadCount = (int)$stmt->fetchColumn();
+    if ($user === 'admin') {
+        $stmt2 = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'");
+        $orderCount = (int)$stmt2->fetchColumn();
+    }
 }
 $products = json_decode(file_get_contents('products.json'), true) ?: [
     ['id'=>'Nash3D','name'=>'Nash3D','price'=>'By Ernyzas','img'=>'https://via.placeholder.com/400x250?text=nash3d']
@@ -76,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
     <div class="nav-right">
         <?php if ($user === 'admin'): ?>
             <a href="notifications.php" class="notif-link" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;">
-                <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+                <?php if ($orderCount > 0): ?><span class="notif-badge"><?php echo $orderCount > 9 ? '9+' : $orderCount; ?></span><?php endif; ?>
             </a>
         <?php endif; ?>
         <?php if ($user): ?>
@@ -109,11 +114,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
   }
 
   function updateBadge(){
+    // chat unread count
     fetch('get_unread_count.php?_='+Date.now())
       .then(r=>r.json())
       .then(data=>{
         var n = data.unread || 0;
         setBadgeOn('.chat-link', n);
+      }).catch(()=>{});
+    // admin order count
+    fetch('get_order_count.php?_='+Date.now())
+      .then(r=>r.json())
+      .then(data=>{
+        var n = data.orders || 0;
         setBadgeOn('.notif-link', n);
       }).catch(()=>{});
   }
