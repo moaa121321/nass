@@ -74,14 +74,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
         </div>
     </nav>
     <div class="nav-right">
-        <?php if ($user): ?>
+        <?php if ($user === 'admin'): ?>
             <a href="notifications.php" class="notif-link" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;">
                 <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
             </a>
+        <?php endif; ?>
+        <?php if ($user): ?>
             <?php if ($user === 'admin'): ?>
-                <a href="chat.php" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;"></a>
+                <a href="chat.php" class="chat-link" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;">
+                    <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+                </a>
             <?php else: ?>
-                <a href="#" id="chatBtn" style="margin-right:10px;"><img src="chat.png" alt="Chat with Admin" style="width:24px;height:24px;"></a>
+                <a href="#" id="chatBtn" class="chat-link" style="margin-right:10px;"><img src="chat.png" alt="Chat with Admin" style="width:24px;height:24px;">
+                    <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+                </a>
             <?php endif; ?>
             <a href="my_orders.php" style="margin-right:10px;"><img src="orders.png" alt="My Orders" style="width:24px;height:24px;"></a>
         <?php endif; ?>
@@ -90,20 +96,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
 
 <script>
 (function(){
+  function setBadgeOn(linkSelector, n) {
+    var link = document.querySelector(linkSelector);
+    if (!link) return;
+    var badge = link.querySelector('.notif-badge');
+    if (n > 0) {
+      if (!badge) { badge = document.createElement('span'); badge.className = 'notif-badge'; link.appendChild(badge); }
+      badge.textContent = n > 9 ? '9+' : n;
+    } else {
+      if (badge) badge.remove();
+    }
+  }
+
   function updateBadge(){
     fetch('get_unread_count.php?_='+Date.now())
       .then(r=>r.json())
       .then(data=>{
         var n = data.unread || 0;
-        var link = document.querySelector('.notif-link');
-        if (!link) return;
-        var badge = link.querySelector('.notif-badge');
-        if (n > 0) {
-          if (!badge) { badge = document.createElement('span'); badge.className = 'notif-badge'; link.appendChild(badge); }
-          badge.textContent = n > 9 ? '9+' : n;
-        } else {
-          if (badge) badge.remove();
-        }
+        setBadgeOn('.chat-link', n);
+        setBadgeOn('.notif-link', n);
       }).catch(()=>{});
   }
   setInterval(updateBadge, 4000);

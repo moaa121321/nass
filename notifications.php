@@ -15,6 +15,12 @@ if ($user) {
     $unreadCount = (int)$stmt->fetchColumn();
 }
 
+// Only admin may view notifications
+if ($user !== 'admin') {
+    header('Location: index.php');
+    exit;
+}
+
 // Handle order actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $id = intval($_POST['id']);
@@ -56,8 +62,15 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
         </div>
     </nav>
     <div class="nav-right">
-        <?php if ($user): ?>
+        <?php if ($user === 'admin'): ?>
             <a href="notifications.php" class="notif-link" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;">
+                <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+            </a>
+            <a href="chat.php" class="chat-link" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;">
+                <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+            </a>
+        <?php elseif ($user): ?>
+            <a href="#" id="chatBtn" class="chat-link" style="margin-right:10px;"><img src="chat.png" alt="Chat with Admin" style="width:24px;height:24px;">
                 <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
             </a>
         <?php endif; ?>
@@ -69,20 +82,24 @@ $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.us
 
 <script>
 (function(){
+  function setBadgeOn(linkSelector, n) {
+    var link = document.querySelector(linkSelector);
+    if (!link) return;
+    var badge = link.querySelector('.notif-badge');
+    if (n > 0) {
+      if (!badge) { badge = document.createElement('span'); badge.className = 'notif-badge'; link.appendChild(badge); }
+      badge.textContent = n > 9 ? '9+' : n;
+    } else {
+      if (badge) badge.remove();
+    }
+  }
   function updateBadge(){
     fetch('get_unread_count.php?_='+Date.now())
       .then(r=>r.json())
       .then(data=>{
         var n = data.unread || 0;
-        var link = document.querySelector('.notif-link');
-        if (!link) return;
-        var badge = link.querySelector('.notif-badge');
-        if (n > 0) {
-          if (!badge) { badge = document.createElement('span'); badge.className = 'notif-badge'; link.appendChild(badge); }
-          badge.textContent = n > 9 ? '9+' : n;
-        } else {
-          if (badge) badge.remove();
-        }
+        setBadgeOn('.notif-link', n);
+        setBadgeOn('.chat-link', n);
       }).catch(()=>{});
   }
   setInterval(updateBadge, 4000);
