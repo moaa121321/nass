@@ -14,6 +14,11 @@ body{margin:0;background:#000;color:#e6eef8;min-height:100vh}
 .menu-dropdown a{display:block;color:#dbeeff;padding:8px 10px;text-decoration:none;border-radius:6px}
 .menu-dropdown a:hover{background:rgba(255,255,255,0.02)}
 
+/* Notifications badge */
+.notif-link{position:relative;display:inline-block}
+.notif-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 6px;background:#ff3b3b;color:#fff;border-radius:999px;font-size:12px;line-height:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(255,59,59,0.16);animation:notifPulse 1.6s ease-in-out infinite}
+@keyframes notifPulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+
 /* Animations */
 @keyframes fadeInUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 @keyframes floatUp { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }

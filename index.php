@@ -8,6 +8,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
 }
 require __DIR__ . '/config.php';
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$unreadCount = 0;
+if ($user) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat WHERE receiver_username = ? AND is_read = FALSE");
+    $stmt->execute([$user]);
+    $unreadCount = (int)$stmt->fetchColumn();
+}
 $products = json_decode(file_get_contents('products.json'), true) ?: [
     ['id'=>'Nash3D','name'=>'Nash3D','price'=>'By Ernyzas','img'=>'https://via.placeholder.com/400x250?text=nash3d']
 ];
@@ -68,16 +74,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product']) && $u
         </div>
     </nav>
     <div class="nav-right">
-        <?php if ($user === 'admin'): ?>
-            <a href="notifications.php" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;"></a>
-            <a href="chat.php" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;"></a>
-        <?php endif; ?>
         <?php if ($user): ?>
-            <a href="#" id="chatBtn" style="margin-right:10px;"><img src="chat.png" alt="Chat with Admin" style="width:24px;height:24px;"></a>
+            <a href="notifications.php" class="notif-link" style="margin-right:10px;"><img src="notifications.png" alt="Notifications" style="width:24px;height:24px;">
+                <?php if ($unreadCount > 0): ?><span class="notif-badge"><?php echo $unreadCount > 9 ? '9+' : $unreadCount; ?></span><?php endif; ?>
+            </a>
+            <?php if ($user === 'admin'): ?>
+                <a href="chat.php" style="margin-right:10px;"><img src="chat.png" alt="Chat" style="width:24px;height:24px;"></a>
+            <?php else: ?>
+                <a href="#" id="chatBtn" style="margin-right:10px;"><img src="chat.png" alt="Chat with Admin" style="width:24px;height:24px;"></a>
+            <?php endif; ?>
             <a href="my_orders.php" style="margin-right:10px;"><img src="orders.png" alt="My Orders" style="width:24px;height:24px;"></a>
         <?php endif; ?>
     </div>
 </header>
+
+<script>
+(function(){
+  function updateBadge(){
+    fetch('get_unread_count.php?_='+Date.now())
+      .then(r=>r.json())
+      .then(data=>{
+        var n = data.unread || 0;
+        var link = document.querySelector('.notif-link');
+        if (!link) return;
+        var badge = link.querySelector('.notif-badge');
+        if (n > 0) {
+          if (!badge) { badge = document.createElement('span'); badge.className = 'notif-badge'; link.appendChild(badge); }
+          badge.textContent = n > 9 ? '9+' : n;
+        } else {
+          if (badge) badge.remove();
+        }
+      }).catch(()=>{});
+  }
+  setInterval(updateBadge, 4000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) updateBadge(); });
+  updateBadge();
+})();
+</script>
 
 <main class="container">
     <h2>Product</h2>
