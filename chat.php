@@ -47,6 +47,7 @@ $chats = $pdo->query("
     </style>
 </head>
 <body>
+<div class="bg-anim" aria-hidden="true"></div>
 <header class="site-header">
     <nav class="nav-left">
         <div class="menu-wrap left">
@@ -102,18 +103,33 @@ document.addEventListener('click', function(e){
     }
 });
 
-document.querySelectorAll('.chat-item').forEach(function(item){
-    item.addEventListener('click', function(){
-        var user = this.getAttribute('data-user');
-        document.getElementById('chatUser').textContent = 'Chat with ' + user;
-        document.getElementById('receiver').value = user;
-        document.getElementById('chatWindow').style.display = 'block';
-        loadMessages(user);
+var currentChatUser = null;
+var messagePoll = null;
+var chatsPoll = null;
+
+function attachChatItemHandlers() {
+    document.querySelectorAll('.chat-item').forEach(function(item){
+        item.addEventListener('click', function(){
+            var user = this.getAttribute('data-user');
+            openChat(user);
+        });
     });
-});
+}
+
+attachChatItemHandlers();
+
+function openChat(user) {
+    currentChatUser = user;
+    document.getElementById('chatUser').textContent = 'Chat with ' + user;
+    document.getElementById('receiver').value = user;
+    document.getElementById('chatWindow').style.display = 'block';
+    loadMessages(user);
+    if (messagePoll) clearInterval(messagePoll);
+    messagePoll = setInterval(function(){ loadMessages(user); }, 2000);
+}
 
 function loadMessages(otherUser) {
-    fetch('get_messages.php?other=' + encodeURIComponent(otherUser))
+    fetch('get_messages.php?other=' + encodeURIComponent(otherUser) + '&_=' + Date.now())
     .then(response => response.json())
     .then(data => {
         var messagesDiv = document.getElementById('messages');
@@ -126,6 +142,35 @@ function loadMessages(otherUser) {
         });
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
+}
+
+function updateChatList() {
+    fetch('get_chats.php?_=' + Date.now())
+    .then(response => response.json())
+    .then(data => {
+        if (!data.chats) return;
+        var container = document.querySelector('.chat-list');
+        container.innerHTML = '';
+        data.chats.forEach(function(chat){
+            var div = document.createElement('div');
+            div.className = 'chat-item ' + (chat.unread > 0 ? 'unread' : '');
+            div.setAttribute('data-user', chat.username);
+            div.innerHTML = '<strong>' + escapeHtml(chat.username) + '</strong>' +
+                            '<p>' + escapeHtml((chat.last_message||'').substring(0,50)) + '...</p>' +
+                            '<small>' + escapeHtml(chat.last_time||'') + '</small>' +
+                            (chat.unread > 0 ? '<span>(' + chat.unread + ' unread)</span>' : '');
+            container.appendChild(div);
+        });
+        attachChatItemHandlers();
+    });
+}
+
+// Start periodic chat list polling
+chatsPoll = setInterval(updateChatList, 3000);
+updateChatList();
+
+function escapeHtml(s) {
+    return s ? s.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }) : '';
 }
 
 document.getElementById('messageForm').addEventListener('submit', function(e){
@@ -145,6 +190,35 @@ document.getElementById('messageForm').addEventListener('submit', function(e){
         }
     });
 });
+// Floating background blobs (same behavior as index)
+(function(){
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var container = document.querySelector('.bg-anim');
+    if (!container) return;
+    var colors = ['#4cc9f0','#ffd166','#ef476f','#06d6a0','#b892ff'];
+    var count = Math.min(10, Math.max(5, Math.floor(window.innerWidth / 160)));
+    for (var i=0;i<count;i++){
+        var el = document.createElement('div');
+        el.className = 'blob ' + (Math.random() > 0.75 ? 'small' : '');
+        var size = Math.round(60 + Math.random() * 160);
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = Math.round(Math.random() * 100) + '%';
+        el.style.top = Math.round(Math.random() * 100) + '%';
+        var c = colors[Math.floor(Math.random()*colors.length)];
+        el.style.background = 'radial-gradient(circle at 30% 30%, '+c+'33, rgba(255,255,255,0.02) 60%)';
+        var dur = 12 + Math.random() * 16;
+        var dx = (Math.random()*40 - 20) + 'px';
+        var dy = (Math.random()*40 - 10) + 'px';
+        el.style.setProperty('--tx', dx);
+        el.style.setProperty('--ty', dy);
+        el.style.setProperty('--s2', (1 + Math.random()*0.06).toFixed(3));
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = (-Math.random()*dur) + 's';
+        el.style.opacity = 0.32 + Math.random()*0.6;
+        container.appendChild(el);
+    }
+})();
 </script>
 </body>
 </html>
